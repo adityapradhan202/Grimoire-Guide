@@ -4,11 +4,11 @@ import pandas as pd
 
 
 
-df = pd.read_csv("data/processed.csv")
+df = pd.read_csv("./data/processed.csv")
 # Loading the components
-loaded_vec = load(filename="saved_components/vectorizer.pickle")
-loaded_sparse = load(filename="saved_components/pdesc_sparse.pickle")
-loaded_nlp_en = load(filename="saved_components/en_model_sm.pickle")
+loaded_vec = load(filename="./saved_components/vectorizer.pickle")
+loaded_sparse = load(filename="./saved_components/pdesc_sparse.pickle")
+loaded_nlp_en = load(filename="./saved_components/en_model_sm.pickle")
 
 
 def process_description(desc, nlp_model=loaded_nlp_en):

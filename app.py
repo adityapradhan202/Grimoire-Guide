@@ -1,18 +1,16 @@
 import streamlit as st
 from recommender import recommend
-import time
-
 from joblib import load
 from sklearn.metrics.pairwise import cosine_similarity
 import pandas as pd
 
 # Absolute paths
-df = pd.read_csv("data/processed.csv")
+df = pd.read_csv("./data/processed.csv")
 
 # Loading the components 
-loaded_vec = load(filename="saved_components/vectorizer.pickle")
-loaded_sparse = load(filename="saved_components/pdesc_sparse.pickle")
-loaded_nlp_en = load(filename="saved_components/en_model_sm.pickle")
+loaded_vec = load(filename="./saved_components/vectorizer.pickle")
+loaded_sparse = load(filename="./saved_components/pdesc_sparse.pickle")
+loaded_nlp_en = load(filename="./saved_components/en_model_sm.pickle")
 
 
 st.header("Grimoire Guide 🧙‍♂️")
