@@ -1,21 +1,14 @@
 from joblib import load
 from sklearn.metrics.pairwise import cosine_similarity
 import pandas as pd
-import os
 
-project_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# Construct paths dynamically
-data_path = os.path.join(project_dir, "data", "processed.csv")
-vectorizer_path = os.path.join(project_dir, "saved_components", "vectorizer.pickle")
-sparse_matrix_path = os.path.join(project_dir, "saved_components", "pdesc_sparse.pickle")
-nlp_model_path = os.path.join(project_dir, "saved_components", "en_model_sm.pickle")
 
-df = pd.read_csv(data_path)
+df = pd.read_csv("data/processed.csv")
 # Loading the components
-loaded_vec = load(filename=vectorizer_path)
-loaded_sparse = load(filename=sparse_matrix_path)
-loaded_nlp_en = load(filename=nlp_model_path)
+loaded_vec = load(filename="saved_components/vectorizer.pickle")
+loaded_sparse = load(filename="saved_components/pdesc_sparse.pickle")
+loaded_nlp_en = load(filename="saved_components/en_model_sm.pickle")
 
 
 def process_description(desc, nlp_model=loaded_nlp_en):

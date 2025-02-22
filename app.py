@@ -1,5 +1,5 @@
 import streamlit as st
-from notebooks.recommender import recommend
+from recommender import recommend
 import time
 
 from joblib import load
@@ -7,7 +7,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 import pandas as pd
 
 # Absolute paths
-df = pd.read_csv("D:/projects-aiml/book_recommendation/data/processed.csv")
+df = pd.read_csv("data/processed.csv")
 
 # Loading the components 
 loaded_vec = load(filename="saved_components/vectorizer.pickle")
