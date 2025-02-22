@@ -15,7 +15,7 @@ loaded_sparse = load(filename="saved_components/pdesc_sparse.pickle")
 loaded_nlp_en = load(filename="saved_components/en_model_sm.pickle")
 
 
-st.header("Grimoire Guide🧙‍♂️")
+st.header("Grimoire Guide 🧙‍♂️")
 st.write("Grimoire Guide is a recommendation system that leverages data science and machine learning concepts to recommends you the best book based on a plot...")
 
 with st.chat_message(name="Wizard", avatar="assistant"):
