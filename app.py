@@ -1,14 +1,18 @@
 import streamlit as st
-
 from joblib import load
 from sklearn.metrics.pairwise import cosine_similarity
 import pandas as pd
 
-df = pd.read_csv("./data/processed.csv")
+@st.cache_resource
+def loading_components():
+    loaded_vec = load(filename="./saved_components/vectorizer.pickle")
+    loaded_sparse = load(filename="./saved_components/pdesc_sparse.pickle")
+    loaded_nlp_en = load(filename="./saved_components/en_model_sm.pickle")
+    df = pd.read_csv("./data/processed.csv")
 
-loaded_vec = load(filename="./saved_components/vectorizer.pickle")
-loaded_sparse = load(filename="./saved_components/pdesc_sparse.pickle")
-loaded_nlp_en = load(filename="./saved_components/en_model_sm.pickle")
+    return loaded_vec, loaded_sparse, loaded_nlp_en, df
+
+loaded_vec, loaded_sparse, loaded_nlp_en, df = loading_components()
 
 def process_description(desc, nlp_model=loaded_nlp_en):
     doc = nlp_model(desc)
@@ -19,25 +23,24 @@ def process_description(desc, nlp_model=loaded_nlp_en):
 
     return " ".join(filtered)
 
-
 def similar_description(desc, nlp_model=loaded_nlp_en, 
                         vectorizer=loaded_vec, desc_sparse=loaded_sparse):
     
-    matched_inds = []
-    thresh_range = [0.3, 0.2, 0.1]
-    for thresh in thresh_range:
+    ptext = process_description(desc=desc, nlp_model=nlp_model)
+    ptext_vec = vectorizer.transform([ptext])
+    csim = cosine_similarity(ptext_vec, desc_sparse)
+    # csim is a numpy array
+    # iteration over it will be very fast 
+    
+    macthed_inds = []
+    for thresh in [0.4, 0.3, 0.2, 0.1]:
+        for ind, sim in enumerate(csim[0]):
+            if sim > thresh and sim < 1.00:
+                macthed_inds.append(ind)
 
-        ptext = process_description(desc=desc, nlp_model=nlp_model)
-        ptext_vec = vectorizer.transform([ptext])
+        if len(macthed_inds) != 0:
+            return macthed_inds
 
-        for ind, desc_sp in enumerate(desc_sparse):
-            csim = cosine_similarity(ptext_vec, desc_sp)
-            if csim[0][0] >= thresh and csim < 1.0:
-                matched_inds.append(ind)
-
-        if len(matched_inds) != 0:
-            return matched_inds
-        
 def collect_data(matched_inds, df=df):
     res_dict = {}
     for ind in matched_inds:
@@ -60,6 +63,8 @@ def recommend(desc, nlp_model=loaded_nlp_en,
     return res
 
 
+
+# app code
 st.header("Grimoire Guide 🧙‍♂️")
 st.write("Grimoire Guide is a recommendation system that leverages data science and machine learning concepts to recommends you the best book based on a plot...")
 
