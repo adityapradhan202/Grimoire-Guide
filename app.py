@@ -7,11 +7,9 @@ import pandas as pd
 # Absolute paths
 df = pd.read_csv("./data/processed.csv")
 
-# Loading the components 
 loaded_vec = load(filename="./saved_components/vectorizer.pickle")
 loaded_sparse = load(filename="./saved_components/pdesc_sparse.pickle")
 loaded_nlp_en = load(filename="./saved_components/en_model_sm.pickle")
-
 
 def process_description(desc, nlp_model=loaded_nlp_en):
     doc = nlp_model(desc)
@@ -21,6 +19,7 @@ def process_description(desc, nlp_model=loaded_nlp_en):
             filtered.append(token.lemma_)
 
     return " ".join(filtered)
+
 
 def similar_description(desc, nlp_model=loaded_nlp_en, 
                         vectorizer=loaded_vec, desc_sparse=loaded_sparse):
