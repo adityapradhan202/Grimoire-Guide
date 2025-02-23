@@ -66,7 +66,7 @@ def recommend(desc, nlp_model=loaded_nlp_en,
 
 # app code
 st.header("Grimoire Guide 🧙‍♂️")
-st.write("Grimoire Guide is a recommendation system that leverages data science and machine learning concepts to recommends you the best book based on a plot...")
+st.write("Grimoire Guide is a recommendation system that leverages data science and machine learning concepts to recommend you the best boosk based on a plot or a description...")
 
 with st.chat_message(name="Wizard", avatar="assistant"):
     st.write("Describe the plot of a book and I will find the best results for you by using my magical powers. It might take some time because I'm an old wizard :D")
