@@ -1,5 +1,5 @@
 joblib
-scikit-learn==1.4.2
+scikit-learn
 pandas
 numpy
-spacy==3.8.4
+spacy
