@@ -4,7 +4,6 @@ from joblib import load
 from sklearn.metrics.pairwise import cosine_similarity
 import pandas as pd
 
-# Absolute paths
 df = pd.read_csv("./data/processed.csv")
 
 loaded_vec = load(filename="./saved_components/vectorizer.pickle")
@@ -81,10 +80,10 @@ if prompt != None:
 
     if len(response) != 0:
         with st.chat_message(name="Wizard", avatar="assistant"):
-            # st.write(response)
+
             for ind, key in enumerate(response):
                 st.markdown(f":orange[{ind+1}. {key}]")
-                # st.markdown(f":green[Description:] {response[key]["description"]}")
+
                 st.markdown(f"Author: {response[key]["author"]}, Ratings: {response[key]["avg_rating"]}")
                 st.markdown(f"Genres: {response[key]["genres"]}")
                 st.markdown(f"URL: {response[key]["url"]}")
