@@ -32,11 +32,11 @@ def similar_description(desc, nlp_model=loaded_nlp_en,
     # csim is a numpy array
     # iteration over it will be very fast 
     
-    macthed_inds = []
+    matched_inds = []
     for thresh in [0.4, 0.3, 0.2, 0.1]:
         for ind, sim in enumerate(csim[0]):
             if sim > thresh and sim < 1.00:
-                macthed_inds.append(ind)
+                matched_inds.append(ind)
 
         if len(macthed_inds) != 0:
             return macthed_inds
