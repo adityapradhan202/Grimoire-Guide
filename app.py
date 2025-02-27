@@ -38,8 +38,8 @@ def similar_description(desc, nlp_model=loaded_nlp_en,
             if sim > thresh and sim < 1.00:
                 matched_inds.append(ind)
 
-        if len(macthed_inds) != 0:
-            return macthed_inds
+        if len(matched_inds) != 0:
+            return matched_inds
 
 def collect_data(matched_inds, df=df):
     res_dict = {}
