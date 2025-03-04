@@ -84,15 +84,15 @@ def find_similar_description(description,
             return matching_indices
 
 
-def collect_data(matched_inds, df=df):
+def collect_book_data(matching_indices, df=df):
     res_dict = {}
-    for ind in matched_inds:
-        res_dict[df["Book"].iloc[ind]] = {
-            "description": df["Description"].iloc[ind],
-            "author": df["Author"].iloc[ind],
-            "genres": df["Genres"].iloc[ind],
-            "avg_rating": df["Avg_Rating"].iloc[ind],
-            "url": df["URL"][ind]
+    for indices in matching_indices:
+        res_dict[df["Book"].iloc[indices]] = {
+            "description": df["Description"].iloc[indices],
+            "author": df["Author"].iloc[indices],
+            "genres": df["Genres"].iloc[indices],
+            "avg_rating": df["Avg_Rating"].iloc[indices],
+            "url": df["URL"][indices]
         }
 
     return res_dict
@@ -103,7 +103,7 @@ def recommend(desc, nlp_model=loaded_nlp_en,
     matched_inds = find_similar_description(desc, nlp_model=nlp_model,
                                             vectorizer=vectorizer,
                                             desc_sparse=desc_sparse)
-    res = collect_data(matched_inds=matched_inds, df=df)
+    res = collect_book_data(matching_indices=matched_inds, df=df)
     return res
 
 
