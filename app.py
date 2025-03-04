@@ -45,12 +45,9 @@ def process_description(description: str,
     :rtype: Str
     """
     doc = nlp_model(description)
-    filtered = []
-    for token in doc:
-        if (not token.is_stop) and (not token.is_punct):
-            filtered.append(token.lemma_)
-
-    return " ".join(filtered)
+    filtered_tokens = [token.lemma_ for token in doc
+                       if not token.is_stop and not token.is_punct]
+    return " ".join(filtered_tokens)
 
 
 def similar_description(desc, nlp_model=loaded_nlp_en,
