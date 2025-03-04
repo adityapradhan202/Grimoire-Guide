@@ -84,7 +84,17 @@ def find_similar_description(description,
             return matching_indices
 
 
-def collect_book_data(matching_indices, df=df):
+def collect_book_data(matching_indices: list[int],
+                      df: pd.DataFrame) -> dict[str, dict[str,str]]:
+    """Collects book details for the given matching indices.
+
+    :param matching_indices: List of indices of similar books.
+    :param df: The dataset contains book details.
+    :return: A dictionary where the book title is the key,
+        and the value is another dictionary
+        containing book details like description,
+        author, genres, average rating, and URL.
+    """
     res_dict = {}
     for indices in matching_indices:
         res_dict[df["Book"].iloc[indices]] = {
