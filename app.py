@@ -1,3 +1,11 @@
+"""
+app.py
+This is streamlit app runner script
+
+@author: adityapradhan202, Asifdotexe
+Last modified: 04-03-2025
+"""
+
 import time
 import numpy as np
 import pandas as pd
