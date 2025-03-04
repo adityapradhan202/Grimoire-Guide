@@ -9,6 +9,7 @@ Last modified: 04-03-2025
 import time
 import numpy as np
 import pandas as pd
+import spacy.language
 import streamlit as st
 from joblib import load
 from sklearn.metrics.pairwise import cosine_similarity
@@ -16,19 +17,34 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 @st.cache_resource
 def loading_components():
-    loaded_vec = load(filename="./saved_components/vectorizer.pickle")
-    loaded_sparse = load(filename="./saved_components/pdesc_sparse.pickle")
-    loaded_nlp_en = load(filename="./saved_components/en_model_sm.pickle")
+    """Load pre-trained components and processed dataset.
+
+    :return: A tuple containing vectorizer, sparse_matrix, nlp_model, df
+    """
+    vectorizer = load(filename="./saved_components/vectorizer.pickle")
+    sparse_matrix = load(filename="./saved_components/pdesc_sparse.pickle")
+    nlp_model = load(filename="./saved_components/en_model_sm.pickle")
     df = pd.read_csv("./data/processed.csv")
 
-    return loaded_vec, loaded_sparse, loaded_nlp_en, df
+    return vectorizer, sparse_matrix, nlp_model, df
 
 
 loaded_vec, loaded_sparse, loaded_nlp_en, df = loading_components()
 
 
-def process_description(desc, nlp_model=loaded_nlp_en):
-    doc = nlp_model(desc)
+def process_description(description: str,
+                        nlp_model: spacy.language.Language=loaded_nlp_en) -> str:
+    """Processes a text description by removing stopwords and punctuation,
+    then lemmatizing the remaining tokens.
+
+    :param description: The text description to be processed.
+    :type description: Str
+    :param nlp_model: A loaded spaCy NLP model.
+    :type nlp_model: spacy.language.Language
+    :return: The cleaned and lemmatized description.
+    :rtype: Str
+    """
+    doc = nlp_model(description)
     filtered = []
     for token in doc:
         if (not token.is_stop) and (not token.is_punct):
@@ -39,7 +55,7 @@ def process_description(desc, nlp_model=loaded_nlp_en):
 
 def similar_description(desc, nlp_model=loaded_nlp_en,
                         vectorizer=loaded_vec, desc_sparse=loaded_sparse):
-    ptext = process_description(desc=desc, nlp_model=nlp_model)
+    ptext = process_description(description=desc, nlp_model=nlp_model)
     ptext_vec = vectorizer.transform([ptext])
     csim = cosine_similarity(ptext_vec, desc_sparse)
     # csim is a numpy array
