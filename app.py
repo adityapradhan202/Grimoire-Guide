@@ -50,20 +50,33 @@ def process_description(description: str,
     return " ".join(filtered_tokens)
 
 
-def similar_description(desc, nlp_model=loaded_nlp_en,
-                        vectorizer=loaded_vec, desc_sparse=loaded_sparse):
-    ptext = process_description(description=desc, nlp_model=nlp_model)
-    ptext_vec = vectorizer.transform([ptext])
-    csim = cosine_similarity(ptext_vec, desc_sparse)
-    # csim is a numpy array
+def find_similar_description(description,
+                             nlp_model=loaded_nlp_en,
+                             vectorizer=loaded_vec,
+                             desc_sparse=loaded_sparse):
+    """Finds indices of descriptions similar to the given description based on cosine similarity.
+
+    :param description: The input description to compare.
+    :type description: Str
+    :param nlp_model: A loaded spaCy NLP model for text processing.
+    :type nlp_model: spacy.language.Language
+    :param vectorizer: A trained TF-IDF vectorizer for text transformation.
+    :type vectorizer: TfidfVectorizer
+    :param desc_sparse: Precomputed sparse matrix of descriptions.
+    :return:
+    """
+    processed_text = process_description(description=description,
+                                         nlp_model=nlp_model)
+    processed_text_vector = vectorizer.transform([processed_text])
+    similarity_scores = cosine_similarity(processed_text_vector, desc_sparse)
+    # similarity_scores is a numpy array
     # iteration over it will be very fast
 
-    matched_inds = []
     for thresh in [0.4, 0.3, 0.2, 0.1]:
-        matched_inds = np.where((csim >= thresh) & (csim < 1.0))[
-            0].tolist()
-        if matched_inds:
-            return matched_inds
+        matching_indices = np.where((similarity_scores >= thresh)
+                                    & (similarity_scores < 1.0))[0].tolist()
+        if matching_indices :
+            return matching_indices
 
 
 def collect_data(matched_inds, df=df):
@@ -82,9 +95,9 @@ def collect_data(matched_inds, df=df):
 
 def recommend(desc, nlp_model=loaded_nlp_en,
               vectorizer=loaded_vec, desc_sparse=loaded_sparse, df=df):
-    matched_inds = similar_description(desc, nlp_model=nlp_model,
-                                       vectorizer=vectorizer,
-                                       desc_sparse=desc_sparse)
+    matched_inds = find_similar_description(desc, nlp_model=nlp_model,
+                                            vectorizer=vectorizer,
+                                            desc_sparse=desc_sparse)
     res = collect_data(matched_inds=matched_inds, df=df)
     return res
 
