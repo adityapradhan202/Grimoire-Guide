@@ -68,13 +68,18 @@ def find_similar_description(description,
     processed_text = process_description(description=description,
                                          nlp_model=nlp_model)
     processed_text_vector = vectorizer.transform([processed_text])
-    similarity_scores = cosine_similarity(processed_text_vector, desc_sparse)
     # similarity_scores is a numpy array
-    # iteration over it will be very fast
+    similarity_scores = cosine_similarity(processed_text_vector, desc_sparse)
 
+    # We start with a high similarity threshold and keep lowering it.
+    # This way, we first try to find very close matches.
+    # If no match is found, we relax the condition and check again.
+    # If we find any match at any step,
+    # we return immediately, no need to check further.
     for thresh in [0.4, 0.3, 0.2, 0.1]:
         matching_indices = np.where((similarity_scores >= thresh)
                                     & (similarity_scores < 1.0))[0].tolist()
+        # If we get matches, we return them immediately.
         if matching_indices :
             return matching_indices
 
