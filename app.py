@@ -77,7 +77,7 @@ def find_similar_description(
                                          nlp_model=nlp_model)
     processed_text_vector = vectorizer.transform([processed_text])
     # similarity_scores is a numpy array
-    similarity_scores = cosine_similarity(processed_text_vector, desc_sparse)
+    similarity_scores = cosine_similarity(processed_text_vector, desc_sparse)[0]
 
     # We start with a high similarity threshold and keep lowering it.
     # This way, we first try to find very close matches.
