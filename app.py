@@ -7,12 +7,16 @@ Last modified: 04-03-2025
 """
 
 import time
+
 import numpy as np
 import pandas as pd
 import spacy.language
 import streamlit as st
 from joblib import load
 from sklearn.metrics.pairwise import cosine_similarity
+# these are just for annotation and are never called.
+from scipy.sparse import csr_matrix
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 
 @st.cache_resource
@@ -34,7 +38,7 @@ loaded_vec, loaded_sparse, loaded_nlp_en, df = loading_components()
 
 def process_description(
         description: str,
-        nlp_model: spacy.language.Language=loaded_nlp_en
+        nlp_model: spacy.language.Language = loaded_nlp_en
 ) -> str:
     """Processes a text description by removing stopwords and punctuation,
     then lemmatizing the remaining tokens.
@@ -53,10 +57,10 @@ def process_description(
 
 
 def find_similar_description(
-        description,
-        nlp_model=loaded_nlp_en,
-        vectorizer=loaded_vec,
-        desc_sparse=loaded_sparse
+        description: str,
+        nlp_model: spacy.language.Language = loaded_nlp_en,
+        vectorizer: TfidfVectorizer = loaded_vec,
+        desc_sparse: csr_matrix = loaded_sparse
 ):
     """Finds indices of descriptions similar to the given description based on cosine similarity.
 
@@ -114,9 +118,31 @@ def collect_book_data(
     return book_details
 
 
-def recommend_books(desc, nlp_model=loaded_nlp_en,
-                    vectorizer=loaded_vec, desc_sparse=loaded_sparse, df=df):
-    matched_inds = find_similar_description(desc, nlp_model=nlp_model,
+def recommend_books(
+        description: str,
+        df: pd.DataFrame,
+        nlp_model: spacy.language.Language = loaded_nlp_en,
+        vectorizer: TfidfVectorizer = loaded_vec,
+        desc_sparse: csr_matrix =loaded_sparse,
+) -> dict[str, dict[str, str]]:
+    """Recommends books similar to the given description.
+
+    :param description: The input book description.
+    :type description: Str
+    :param nlp_model: The NLP model for text processing.
+    :type nlp_model: spacy.language.Language
+    :param vectorizer: The trained TF-IDF vectorizer.
+    :type vectorizer: TfidfVectorizer
+    :param desc_sparse: The sparse matrix of book descriptions.
+    :type desc_sparse: Csr_matrix
+    :param df: The dataset contains book details.
+    :type df: pd.DataFrame
+    :return: A dictionary where the book title is the key,
+        and the value is another dictionary containing book details like description,
+        author, genres, average rating, and URL.
+    :rtype: dict[str, dict[str, str]]
+    """
+    matched_inds = find_similar_description(description, nlp_model=nlp_model,
                                             vectorizer=vectorizer,
                                             desc_sparse=desc_sparse)
     res = collect_book_data(matching_indices=matched_inds, df=df)
@@ -139,7 +165,7 @@ if prompt != None:
 
         st.write("Wait for a few seconds, it might take some time...")
 
-    response = recommend_books(desc=prompt, nlp_model=loaded_nlp_en,
+    response = recommend_books(description=prompt, nlp_model=loaded_nlp_en,
                                vectorizer=loaded_vec, df=df,
                                desc_sparse=loaded_sparse)
 
