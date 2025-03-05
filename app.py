@@ -164,7 +164,7 @@ with st.chat_message(name="Wizard", avatar="assistant"):
         "Describe the plot of a book and I will find the best results for you by using my magical powers. It might take some time because I'm an old wizard :D")
 
 prompt = st.chat_input(placeholder="Describe the plot here...", max_chars=500)
-if prompt != None:
+if prompt is not None:
     start_time = time.time()  # Start timing
     with st.chat_message(name="Wizard", avatar="assistant"):
 
