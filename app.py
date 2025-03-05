@@ -24,16 +24,18 @@ def loading_components():
     vectorizer = load(filename="./saved_components/vectorizer.pickle")
     sparse_matrix = load(filename="./saved_components/pdesc_sparse.pickle")
     nlp_model = load(filename="./saved_components/en_model_sm.pickle")
-    df = pd.read_csv("./data/processed.csv")
+    dataframe = pd.read_csv("./data/processed.csv")
 
-    return vectorizer, sparse_matrix, nlp_model, df
+    return vectorizer, sparse_matrix, nlp_model, dataframe
 
 
 loaded_vec, loaded_sparse, loaded_nlp_en, df = loading_components()
 
 
-def process_description(description: str,
-                        nlp_model: spacy.language.Language=loaded_nlp_en) -> str:
+def process_description(
+        description: str,
+        nlp_model: spacy.language.Language=loaded_nlp_en
+) -> str:
     """Processes a text description by removing stopwords and punctuation,
     then lemmatizing the remaining tokens.
 
@@ -50,10 +52,12 @@ def process_description(description: str,
     return " ".join(filtered_tokens)
 
 
-def find_similar_description(description,
-                             nlp_model=loaded_nlp_en,
-                             vectorizer=loaded_vec,
-                             desc_sparse=loaded_sparse):
+def find_similar_description(
+        description,
+        nlp_model=loaded_nlp_en,
+        vectorizer=loaded_vec,
+        desc_sparse=loaded_sparse
+):
     """Finds indices of descriptions similar to the given description based on cosine similarity.
 
     :param description: The input description to compare.
@@ -84,8 +88,10 @@ def find_similar_description(description,
             return matching_indices
 
 
-def collect_book_data(matching_indices: list[int],
-                      df: pd.DataFrame) -> dict[str, dict[str,str]]:
+def collect_book_data(
+        matching_indices: list[int],
+        df: pd.DataFrame
+) -> dict[str, dict[str,str]]:
     """Collects book details for the given matching indices.
 
     :param matching_indices: List of indices of similar books.
@@ -95,21 +101,21 @@ def collect_book_data(matching_indices: list[int],
         containing book details like description,
         author, genres, average rating, and URL.
     """
-    res_dict = {}
-    for indices in matching_indices:
-        res_dict[df["Book"].iloc[indices]] = {
-            "description": df["Description"].iloc[indices],
-            "author": df["Author"].iloc[indices],
-            "genres": df["Genres"].iloc[indices],
-            "avg_rating": df["Avg_Rating"].iloc[indices],
-            "url": df["URL"][indices]
+    book_details= {}
+    for index in matching_indices:
+        book_details[df["Book"].iloc[index]] = {
+            "description": df["Description"].iloc[index],
+            "author": df["Author"].iloc[index],
+            "genres": df["Genres"].iloc[index],
+            "avg_rating": df["Avg_Rating"].iloc[index],
+            "url": df["URL"][index]
         }
 
-    return res_dict
+    return book_details
 
 
-def recommend(desc, nlp_model=loaded_nlp_en,
-              vectorizer=loaded_vec, desc_sparse=loaded_sparse, df=df):
+def recommend_books(desc, nlp_model=loaded_nlp_en,
+                    vectorizer=loaded_vec, desc_sparse=loaded_sparse, df=df):
     matched_inds = find_similar_description(desc, nlp_model=nlp_model,
                                             vectorizer=vectorizer,
                                             desc_sparse=desc_sparse)
@@ -133,9 +139,9 @@ if prompt != None:
 
         st.write("Wait for a few seconds, it might take some time...")
 
-    response = recommend(desc=prompt, nlp_model=loaded_nlp_en,
-                         vectorizer=loaded_vec, df=df,
-                         desc_sparse=loaded_sparse)
+    response = recommend_books(desc=prompt, nlp_model=loaded_nlp_en,
+                               vectorizer=loaded_vec, df=df,
+                               desc_sparse=loaded_sparse)
 
     end_time = time.time()  # End timing
     response_time = round(end_time - start_time,2)  # Calculate response time in seconds
