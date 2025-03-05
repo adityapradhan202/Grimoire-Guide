@@ -1,6 +1,7 @@
-joblib
-scikit-learn
-pandas
-numpy
-spacy
-streamlit
+joblib~=1.4.2
+scikit-learn~=1.6.1
+pandas~=2.2.3
+numpy~=2.2.3
+spacy~=3.8.4
+streamlit~=1.42.2
+scipy~=1.15.2
