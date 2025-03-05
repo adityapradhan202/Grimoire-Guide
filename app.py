@@ -142,11 +142,16 @@ def recommend_books(
         author, genres, average rating, and URL.
     :rtype: dict[str, dict[str, str]]
     """
-    matched_inds = find_similar_description(description, nlp_model=nlp_model,
-                                            vectorizer=vectorizer,
-                                            desc_sparse=desc_sparse)
-    res = collect_book_data(matching_indices=matched_inds, df=df)
-    return res
+    matching_indices = find_similar_description(
+        description,
+        nlp_model=nlp_model,
+        vectorizer=vectorizer,
+        desc_sparse=desc_sparse
+    )
+
+    # Next, we collect details of the matched books.
+    recommended_books = collect_book_data(matching_indices=matching_indices, df=df)
+    return recommended_books
 
 
 # app code
